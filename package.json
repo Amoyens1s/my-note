@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "esbuild index2.js --platform=node --target=es2015 --outfile=out.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "esbuild": "^0.12.17"
+  }
+}

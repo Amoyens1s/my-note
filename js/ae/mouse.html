@@ -10,49 +10,83 @@
         top: 0;
         left: 0;
         right: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
       }
-      .box {
+      .box1 {
+        position: absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        margin:auto;
+        width: 1000px;
+        height: 400px;
+        background: #f0a238;
+      }
+      .box2 {
+        position: absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        margin:auto;
+        width: 500px;
+        height: 100px;
+        background: #5358a3;
+      }
+      .box3 {
+        position: absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        margin:auto;
         width: 100px;
         height: 40px;
-        background: #f0a238;
+        background: #f11cdf;
       }
     </style>
   </head>
   <body>
     <div class="content">
-      <div class="box"></div>
+      <div class="box1"></div>
+      <div class="box2"></div>
+      <div class="box3"></div>
     </div>
   </body>
   <script type="text/javascript">
-    var items = document.getElementsByClassName('box');
-    document.addEventListener(
-      'mousemove',
-      function (evt) {
-        var x = evt.clientX;
-        var y = evt.clientY;
-        //console.log(x);
-        var winWidth = window.innerWidth;
-        var winHeight = window.innerHeight;
-        var halfWidth = winWidth / 2;
-        var halfHeight = winHeight / 2;
+    function move(n, name) {
+      var items = document.getElementsByClassName(name);
+      document.addEventListener(
+        'mousemove',
+        function (evt) {
+          var x = evt.clientX;
+          var y = evt.clientY;
+          //console.log(x);
+          var winWidth = window.innerWidth;
+          var winHeight = window.innerHeight;
+          var halfWidth = winWidth / 2;
+          var halfHeight = winHeight / 2;
 
-        var rx = x - halfWidth;
-        var ry = halfHeight - y;
-        var length = items.length;
-        var max = 3; //这个值越小，幅度越大
-        for (var i = 0; i < length; i++) {
-          var dx =
-            (items[i].getBoundingClientRect().width / max) * (rx / -halfWidth);
-          var dy =
-            (items[i].getBoundingClientRect().height / max) * (ry / halfHeight);
-          items[i].style['transform'] = items[i].style['-webkit-transform'] =
-            'translate(' + dx + 'px,' + dy + 'px)';
-        }
-      },
-      false
-    );
+          var rx = x - halfWidth;
+          var ry = halfHeight - y;
+          var length = items.length;
+          var max = n; //这个值越小，幅度越大
+          for (var i = 0; i < length; i++) {
+            var dx =
+              (items[i].getBoundingClientRect().width / max) *
+              (rx / -halfWidth);
+            var dy =
+              (items[i].getBoundingClientRect().height / max) *
+              (ry / halfHeight);
+            items[i].style['transform'] = items[i].style['-webkit-transform'] =
+              'translate(' + dx + 'px,' + dy + 'px)';
+          }
+        },
+        false
+      );
+    }
+    move(30, 'box1');
+    move(10, 'box2');
+    move(3, 'box3');
   </script>
 </html>

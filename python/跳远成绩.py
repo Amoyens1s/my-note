@@ -8,15 +8,22 @@ groups=(
 def passList(scores,lowlimit):
     L=[]
     a=list(scores)
-    foe i in a:
+    for i in a:
         if i>=lowlimit:
             L.append(i)
-            return L
+    return L
 def main():
     b=list(groups)
-    for m in range(0,len(b)):
-        s[m]=passList(groups[m],140)
-    print("第{}组:{}".format(m,s[m]))
+    s=[]
+    print("获得初赛资格的成绩")
+    for m in range(0, len(b)):
+        s.append(passList(groups[m],142))
+        if s[m]:
+            s2 = " ".join(str(i) for i in s[m])
+            print("第{}组:	{} ".format(m+1,s2))
+        else:
+            print("第{}组:	{}".format(m+1, ''))
+        
         
     
 main()

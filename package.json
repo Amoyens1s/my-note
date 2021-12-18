@@ -4,6 +4,7 @@
   },
   "type": "module",
   "dependencies": {
+    "axios": "^0.24.0",
     "esbuild": "^0.12.17"
   }
 }

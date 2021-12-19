@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.webgl {
+  position: fixed;
+  left: 0;
+  top: 0;
+  /* 部分系统or浏览器，可能会有蓝线 */
+  outline: none;
+}
+
+html, body {
+  /* 禁用任何类型的滚动 */
+  overflow: hidden;
+}

@@ -282,3 +282,5 @@ colorTexture.minFilter = THREE.NearestFilter
 有许多网站，但是并不是所有纹理都是免费的，比如www.poliigon.com
 
 当然了，如果你有一些基础，那么用Photoshop这样的软件自己制作纹理是最好的选择，也不会遇到任何的版权问题。
+
+这一章我们学到了关于纹理的基础知识，下一章我们将讲如何在材质中应用他们。

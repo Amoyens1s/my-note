@@ -42,7 +42,10 @@ const normalTexture = textureLoader.load('/textures/door/normal.jpg')
 const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
 const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
 const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
+const minecraft = textureLoader.load('/textures/minecraft.png')
 
+// 注释掉看一下，钻石块会很模拟，而通过放大滤镜我们可以使其变得清晰
+minecraft.magFilter = THREE.NearestFilter
 /**
  * Base
  */
@@ -52,11 +55,19 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+// colorTexture.repeat.x = 2
+// colorTexture.repeat.y = 3
+
+// // wrapS是X轴的包装
+// colorTexture.wrapS = THREE.RepeatWrapping
+// // wrapT是Y轴的包装
+// colorTexture.wrapT = THREE.RepeatWrapping
+
 /**
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ map: colorTexture })
+const material = new THREE.MeshBasicMaterial({ map: minecraft })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 

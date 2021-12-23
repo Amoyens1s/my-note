@@ -156,3 +156,129 @@ const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclus
 const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
 const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
 ```
+
+## UV展开
+降维打击，把3D的网格展开成2维的平面，就是UV展开，就像打开一个折纸或糖果包装，使它平坦。每个顶点在一个平面(通常是正方形)上都有一个二维坐标。
+
+纹理以不同的方式被拉伸或挤压来覆盖几何体，因此使用UV展开可以帮助我们方便地创建纹理，在许多游戏的资源包中可以看到的材质贴图就是这个东西。
+
+我们可以通过`geometry.attributes.uv`看到UV坐标，如果你创建自己的几何图形，并想应用一个纹理，你必须指定UV坐标。如果你使用3D软件制作几何图形，你也需要。
+
+## 纹理变换
+让我们回到使用一个纹理的立方体，看看我们可以对这个纹理应用什么样的变换。
+
+### 重复 Repeat
+可以使用 repeat 属性重复纹理，这是一个 Vector2，意味着它具有 x 和 y 属性。
+```js
+const colorTexture = textureLoader.load('/textures/door/color.jpg')
+colorTexture.repeat.x = 2
+colorTexture.repeat.y = 3
+```
+正如你所看到的，纹理是不重复的，但它是更小的，最后一个像素似乎拉伸。这是因为默认情况下纹理没有被设置为重复它自己。要更改这一点，必须使用 THREE.RepeatWrapping 常量更新 wrapS 和 wrapT 属性。
+
+```js
+// wrapS是X轴的包装
+colorTexture.wrapS = THREE.RepeatWrapping
+// wrapT是Y轴的包装
+colorTexture.wrapT = THREE.RepeatWrapping
+```
+除此之外还有Mirrored包裹，会把重复的进行一个镜像：
+```js
+colorTexture.wrapS = THREE.MirroredRepeatWrapping
+colorTexture.wrapT = THREE.MirroredRepeatWrapping
+```
+
+### 偏移量 Offset
+```js
+colorTexture.offset.x = 0.5
+colorTexture.offset.y = 0.5
+```
+
+### 旋转 Rotation
+你可以使用旋转属性旋转纹理，这是一个简单的数字，对应于弧度的角度:
+```js
+colorTexture.rotation = Math.PI * 0.25 // 逆时针旋转45°
+```
+如果你删除偏移和重复属性，你会看到旋转发生在立方体面的左下角。
+
+事实上，左下角就是UV坐标0,0，我们可以通过center属性来改变旋转的中心点：
+```
+colorTexture.rotation = Math.PI * 0.25
+colorTexture.center.x = 0.5
+colorTexture.center.y = 0.5
+```
+因为我们的立方体长宽高都是1，所以现在它的旋转点在正中心
+
+### 过滤和 Mipmapping
+如果我们倾斜看一个屏幕，会发现它比较模糊，这是因为过滤和 mipmapping。Mipmapping是一种技术，为了加快渲染速度和减少图像锯齿，贴图被处理成由一系列被预先计算和优化过的图片组成的文件，它会把我们的纹理每次长宽减半以创建一个更小的纹理，一直到得到一个1x1大小的纹理，然后所有尺寸的纹理都会被发送给GPU，GPU会选择最合适的。
+
+JS 和 GPU 已经处理了所有这些问题，不过你可以设置使用什么样的过滤算法。有两种滤镜算法: 缩小滤镜和放大滤镜。
+
+#### 缩小滤镜
+当我们的纹理大于我们实际渲染的大小时候，就会使用缩小滤镜。
+
+可以使用 minFilter 属性更改纹理的缩小滤镜。
+
+一共有6个可用的值：
+- THREE.NearestFilter 会非常的锋利
+- THREE.LinearFilter
+- THREE.NearestMipmapNearestFilter
+- THREE.NearestMipmapLinearFilter
+- THREE.LinearMipmapNearestFilter
+- THREE.LinearMipmapLinearFilter
+
+其中LinearMipmapLinearFilter是默认值
+
+```js
+colorTexture.minFilter = THREE.NearestFilter
+```
+
+#### 放大滤镜
+当我们的纹理小于我们实际渲染的大小时候，就会使用放大滤镜。纹理将会变得模糊，不过如果效果不是太夸张，用户可能甚至不会注意到它。
+
+可以使用 magFilter 属性更改纹理的放大筛选器。
+
+一共有两个可用的值：
+- THREE.NearestFilter 同样会使东西变得锋利，不过应该说是像素化，这在有些场合非常有用，比如说minecraft，具体的请看代码
+- THREE.LinearFilter
+
+其中LinearFilter是默认的
+
+```js
+colorTexture.magFilter = THREE.NearestFilter
+```
+
+不管是缩小滤镜还是放大滤镜，THREE.NearestFilter的性能开销是最低的，所以尽可能利用它以获得更高的性能。
+
+对于缩小滤镜，如果正在使用THREE.NearestFilter，你将不再需要mipmaps，所以可以禁用它以略微减轻GPU的负担：
+```js
+colorTexture.generateMipmaps = false
+colorTexture.minFilter = THREE.NearestFilter
+```
+
+## 纹理格式和优化
+当准备纹理的时候，必须记住三个关键的东西：weight, size, data。
+
+### Weight 重量
+比如jpg通常压缩率要比png要高，那么我们可以说png更重，为用户提供更轻的纹理以提高各方面的性能。
+
+### Size 尺寸
+你使用的每个像素的纹理都必须存储在 GPU 上，不管图像的重量如何。和你的硬盘一样，GPU 也有存储限制。更糟糕的是，自动生成的 mipmapping 增加了需要存储的像素数量。
+
+所以尽可能减小图片的尺寸，比如从1024x1024降低到512x512。
+
+如果你还记得我们说过的关于 mipmapping 的内容，Three.js 会反复生成一个半小的纹理版本，直到它得到一个1x1的纹理。因此，你的纹理宽度和高度必须是2的幂。这是必需的，因此 Three.js 可以将纹理的大小除以2。
+
+如果你使用的纹理的宽度或高度与2的幂不同，thre.js 会尝试把它拉伸到最近的2的幂，这可能会导致视觉效果不佳，并且你还会在控制台中得到一个警告。
+
+### Data 数据
+纹理是支持透明度的，但是jpg文件没有alpha通道，因此你可能更喜欢用png。不过我们有alpha map，后面会讲到。
+
+如果使用的是普通纹理（normalTexture），你可能希望获得更精确的颜色通道，那么无损压缩的png更合适。
+
+根据不同的需求做出不同的选择。
+
+## 哪里可以找到纹理
+有许多网站，但是并不是所有纹理都是免费的，比如www.poliigon.com
+
+当然了，如果你有一些基础，那么用Photoshop这样的软件自己制作纹理是最好的选择，也不会遇到任何的版权问题。
